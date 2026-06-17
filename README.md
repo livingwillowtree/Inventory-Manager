@@ -22,9 +22,9 @@ A computerized solution that can efficiently manage product information, monitor
 | :--- | :--- | :--- |
 | **Livingwillowtree** | File Architecture, Logging & Struct Optimization | [@livingwillowtree](https://github.com/livingwillowtree) |
 | **Fortunity**  | UI Design & Main Menu Event Loops | [Profile Link] |
-| **Everwithyou** | Nested Submenu System Logic | [Profile Link] |
-| **Gelgelgelo** | Product Database Arrays & Structs | [Profile Link] |
-| **Hello** | ewan | [Profile Link] |
+| **Jaykythecoder** | Nested Submenu System Logic | [Profile Link] |
+| **yhuriafkalways** | Product Database Arrays & Structs | [Profile Link] |
+| **johncarloescarilla92-cloud** | ewan | [Profile Link] |
 
 ---
 
