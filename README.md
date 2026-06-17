@@ -20,11 +20,11 @@ A computerized solution that can efficiently manage product information, monitor
 
 | Developer | Role / Module Assignment | Git Profile |
 | :--- | :--- | :--- |
-| **Livingwillowtree** | File Architecture, Logging & Struct Optimization | [@livingwillowtree](https://github.com/livingwillowtree) |
-| **Fortunity**  | UI Design & Main Menu Event Loops | [Profile Link] |
-| **Jaykythecoder** | Nested Submenu System Logic | [Profile Link] |
-| **yhuriafkalways** | Product Database Arrays & Structs | [Profile Link] |
-| **johncarloescarilla92-cloud** | ewan | [Profile Link] |
+| **Livingwillowtree** | Code Architecture, UI Design, File Handling & Overall Optimization | [@livingwillowtree](https://github.com/livingwillowtree) |
+| **Fortunity**  | Search Feature & Stock Monitoring | [@Fortunity](https://github.com/fortunity) |
+| **Jaykythecoder** | Nested Submenu System Logic | [@jaykythecoder](https://github.com/jaykythecoder) |
+| **Yhuriafkalways** | Product Database Arrays & Structs | [@yhuriafkalways](https://github.com/yhuriafkalways) |
+| **Johncarloescarilla92-cloud** | ewan | [@johncarloescarilla92-cloud](https://github.com/johncarloescarilla92-cloud) |
 
 ---
 
