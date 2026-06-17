@@ -22,9 +22,9 @@ A computerized solution that can efficiently manage product information, monitor
 | :--- | :--- | :--- |
 | **Livingwillowtree** | Code Architecture, UI Design, File Handling & Overall Optimization | [@livingwillowtree](https://github.com/livingwillowtree) |
 | **Fortunity**  | Search Feature & Stock Monitoring | [@Fortunity](https://github.com/fortunity) |
-| **Jaykythecoder** | ewan | [@jaykythecoder](https://github.com/jaykythecoder) |
-| **Yhuriafkalways** | ewan | [@yhuriafkalways](https://github.com/yhuriafkalways) |
-| **Johncarloescarilla92-cloud** | ewan | [@johncarloescarilla92-cloud](https://github.com/johncarloescarilla92-cloud) |
+| **Jaykythecoder** | Add & Update product records | [@jaykythecoder](https://github.com/jaykythecoder) |
+| **Yhuriafkalways** | Menu & Submenu design & Delete Product | [@yhuriafkalways](https://github.com/yhuriafkalways) |
+| **Johncarloescarilla92-cloud** | Order System & Transaction Summaries | [@johncarloescarilla92-cloud](https://github.com/johncarloescarilla92-cloud) |
 
 ---
 
