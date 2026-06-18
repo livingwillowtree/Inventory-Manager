@@ -34,12 +34,21 @@ A computerized solution that can efficiently manage product information, monitor
 
 **⚠️ Important:** Make sure that these files and directories are present before compiling or running;
 * **exe/** This will hold your executable, the program will not compile if this is not present
-* **db/inventory.txt** The program will look for this file and safely quit if not found.
+* **db/inventory.txt and db/log.txt** The program will look for this file and safely quit if not found.
 
 
 
 To build and run this system, execute the following commands inside the **root directory** in your terminal:
 
+### **If you have make installed:**
+```bash
+# Compile
+make
+
+# Execute the program
+make run
+#
+```
 ### **For Windows Powershell:**
 ```PowerShell
 # Compile
