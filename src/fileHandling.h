@@ -16,7 +16,7 @@ struct FileReports {
     const std::string writingFailed = "[System Error]: There was an error writing into file.\n";
 
     const std::string successLoad = "File read successfully.\n\n";
-    const std::string successSave = "File saved successfully!\n";
+    const std::string successSave = "File saved successfully.\n";
 }const fmsg;
 
 struct FileStatus {
