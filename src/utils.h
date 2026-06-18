@@ -45,5 +45,6 @@ bool validateString(const std::string& str);
 bool validateDoubleStr(const std::string& str);
 bool validateIntStr(const std::string& str);
 bool isIdDuplicate(const std::string& id, const std::vector<ProductInfo>& inventory);
+void clearScreen();
 
 #endif

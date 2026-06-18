@@ -29,7 +29,7 @@ void displayInvMngMenu();
 void displayStockMonMenu();
 void displaySalesMenu();
 void displayProducts(const std::vector<ProductInfo>& products);
-void displayStock(const std::vector<ProductInfo>& products, bool criticalOnly = false);
+void displayStock(const std::vector<ProductInfo>& products, char method = 'a');
 void displayCart(const std::vector<CartItem>& cart, const double total);
 void displaySalesLog(const std::vector<SaleReceipt>& salesLog);
 
@@ -37,6 +37,7 @@ void addProduct(std::vector<ProductInfo>& inventory);
 void updateProduct(std::vector<ProductInfo>& products);
 void searchProduct(const std::vector<ProductInfo>& products);
 void deleteProduct(std::vector<ProductInfo>& products);
+void displayAnalysisReport(const std::vector<ProductInfo>& inventory, const std::vector<SaleReceipt>& salesLog);
 
 void processOrder(std::vector<ProductInfo>& products, std::vector<SaleReceipt>& salesLog);
 

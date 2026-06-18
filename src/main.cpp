@@ -52,15 +52,19 @@ int main() {
 
         switch (choice) {
             case 1:
+                clearScreen();
                 inventoryManagement(inventory);
                 break;
             case 2:
+                clearScreen();
                 stockMonitoring(inventory);
                 break;
             case 3:
+                clearScreen();
                 salesAndTransaction(inventory, salesLog);
                 break;
             case 4:
+                clearScreen();
                 status = saveInventory(inventory);
                 std::cout << "\n\n";
                 switch (status) {
@@ -143,14 +147,17 @@ void stockMonitoring(const std::vector<ProductInfo>& inventory) {
     int choice = 0;
     while (isRunning) {
         displayStockMonMenu();
-        choice = getInt("", 0, 2);
+        choice = getInt("", 0, 3);
 
         switch (choice) {
             case 1:
-                displayStock(inventory);
+                displayStock(inventory, 'a');
                 break;
             case 2:
-                displayStock(inventory, true);
+                displayStock(inventory, 'c');
+                break;\
+            case 3:
+                displayStock(inventory, 's');
                 break;
             case 0:
                 isRunning = false;
@@ -165,7 +172,7 @@ void salesAndTransaction(std::vector<ProductInfo>& inventory, std::vector<SaleRe
     int choice = 0;
     while (isRunning) {
         displaySalesMenu();
-        choice = getInt("", 0, 2);
+        choice = getInt("", 0, 3);
 
         switch (choice) {
             case 1:
@@ -173,6 +180,9 @@ void salesAndTransaction(std::vector<ProductInfo>& inventory, std::vector<SaleRe
                 break;
             case 2:
                 displaySalesLog(salesLog);
+                break;
+            case 3:
+                displayAnalysisReport(inventory, salesLog);
                 break;
             case 0:
                 isRunning = false;

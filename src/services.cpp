@@ -17,6 +17,8 @@ void printCartTableSeparator();
 void printSalesLogSeparator(char symbol);
 void printCartTableHeader();
 void printProductInfo(const ProductInfo& p);
+void printStockTableSeparator();
+void printStockTableHeader();
 void printStockInfo(const ProductInfo& p);
 void printCartInfo(const CartItem& c);
 void printReceiptHeader();
@@ -217,6 +219,88 @@ void deleteProduct(std::vector<ProductInfo>& products) {
     }
 }
 
+void displayAnalysisReport(const std::vector<ProductInfo>& inventory, const std::vector<SaleReceipt>& salesLog) {
+    std::cout << "\n==================================================";
+    std::cout << "\n               INVENTORY ANALYSIS REPORT          ";
+    std::cout << "\n==================================================\n";
+
+    int outOfStockCount = 0;
+    int lowStockCount = 0;
+    
+    for (const auto& product : inventory) {
+        if (product.stockQnty == 0) outOfStockCount++;
+        else if (product.stockQnty <= CRIT_THRESHOLD) lowStockCount++; 
+    }
+
+    std::cout << "--- Inventory Warehouse State ---\n";
+    std::cout << " Unique Products Tracked : " << inventory.size() << "\n";
+    std::cout << " Out of Stock Items [!]  : " << outOfStockCount << "\n";
+    std::cout << " Critically Low Items    : " << lowStockCount << "\n\n";
+
+    if (salesLog.empty()) {
+        std::cout << "--- Financial & Sales Performance ---\n";
+        std::cout << " [Notice]: No transaction logs found. Revenue metrics unavailable.\n";
+        std::cout << "==================================================\n";
+        return;
+    }
+
+    double totalRevenue = 0.0;
+    int totalUnitsSold = 0;
+    
+    std::map<std::string, int> productQuantities;
+    std::map<std::string, double> productRevenue;
+
+    for (const auto& receipt : salesLog) {
+        totalRevenue += receipt.grandTotal;
+        
+        for (const auto& item : receipt.itemsBought) {
+            totalUnitsSold += item.orderQty;
+            productQuantities[item.ID] += item.orderQty;
+            productRevenue[item.ID] += item.total;
+        }
+    }
+
+    double avgTicket = totalRevenue / salesLog.size();
+
+    std::cout << std::fixed << std::setprecision(2);
+    std::cout << "--- Financial & Sales Performance ---\n";
+    std::cout << " Total Revenue Generated : " << totalRevenue << "\n";
+    std::cout << " Total Invoices Processed: " << salesLog.size() << "\n";
+    std::cout << " Average Transaction Value    : " << avgTicket << "\n";
+    std::cout << " Total Stock Units Sold  : " << totalUnitsSold << "\n\n";
+
+    // --- 3. VELOCITY & REVENUE LEADERS ---
+    std::string bestSellerID = "";
+    int maxQty = 0;
+    std::string topEarnerID = "";
+    double maxRevenue = 0.0;
+
+    for (const auto& [id, qty] : productQuantities) {
+        if (qty > maxQty) {
+            maxQty = qty;
+            bestSellerID = id;
+        }
+    }
+
+    for (const auto& [id, rev] : productRevenue) {
+        if (rev > maxRevenue) {
+            maxRevenue = rev;
+            topEarnerID = id;
+        }
+    }
+
+    std::cout << "--- Product Performance Highlights ---\n";
+    if (!bestSellerID.empty()) {
+        std::cout << " Best Selling Item (Volume) : Product ID " << bestSellerID 
+                  << " (" << maxQty << " units sold)\n";
+    }
+    if (!topEarnerID.empty()) {
+        std::cout << " Highest Revenue Generator  : Product ID " << topEarnerID 
+                  << " (" << maxRevenue << " generated)\n";
+    }
+    std::cout << "==================================================\n";
+}
+
 void processOrder(std::vector<ProductInfo>& products, std::vector<SaleReceipt>& salesLog) {
     if (products.empty()) {
         std::cout << smsg.inventoryEmpty;
@@ -389,7 +473,7 @@ char checkout(std::vector<CartItem>& cart, std::vector<ProductInfo>& inventory, 
     receipt.date = getCurrentDate();
 
     std::cout << "\n" << std::string(WIDTH_REC_DESC + WIDTH_REC_QTY + WIDTH_REC_PRICE + WIDTH_REC_TOTAL + 13, '=') << "\n";
-    std::cout << "                 OFFICIAL INVOICE TRANSACTION              \n";
+    std::cout << std::right << std::setw((WIDTH_REC_DESC + WIDTH_REC_QTY + WIDTH_REC_PRICE + WIDTH_REC_TOTAL + 13)/2+14) << "OFFICIAL INVOICE TRANSACTION\n";
     std::cout << std::string(WIDTH_REC_DESC + WIDTH_REC_QTY + WIDTH_REC_PRICE + WIDTH_REC_TOTAL + 13, '=') << "\n";
     std::cout << "ID Track:   " << receipt.transactionID << "\n";
     std::cout << "Timestamp:  " << receipt.date << "\n";
@@ -473,6 +557,7 @@ void displayStockMonMenu() {
     std::string stockMonMenu = "\n--- STOCK MONITORING ---\n\n"
                                "    [1] Display All\n"
                                "    [2] Display Critical\n"
+                               "    [3] Sort by Stock\n"
                                "    [0] Exit";
     std::cout << stockMonMenu << std::endl;
 }
@@ -481,6 +566,7 @@ void displaySalesMenu() {
     std::string customerMenu = "\n--- SALES & TRANSACTION ---\n\n"
                                "    [1] Process New Order\n"
                                "    [2] View Sales Log\n"
+                               "    [3] Get Analysis Report\n"
                                "    [0] Exit";
     std::cout << customerMenu << std::endl;
 }
@@ -499,30 +585,26 @@ void displayProducts(const std::vector<ProductInfo>& products) {
     printInventoryTableSeparator();
 }
 
-void displayStock(const std::vector<ProductInfo>& products, bool criticalOnly) {
+
+void displayStock(const std::vector<ProductInfo>& products, char method) {
     if (products.empty()) {
         std::cout << smsg.inventoryEmpty;
         return;
     }
     std::cout << "\n";
-    std::cout << "+" << std::string(WIDTH_ID + 2, '-')
-              << "+" << std::string(WIDTH_C_NAME + 2, '-')
-              << "+" << std::string(WIDTH_STOCK + 2, '-')
-              << "+" << std::string(WIDTH_STOCK_AVAILABILITY + 2, '-') << "+\n";
+    printStockTableHeader();
 
-    std::cout << "| " << std::left << std::setw(WIDTH_ID) << "ID"
-              << " | " << std::setw(WIDTH_C_NAME) << "Product Name"
-              << " | " << std::right << std::setw(WIDTH_STOCK) << "Stock"
-              << " | " << std::left << std::setw(WIDTH_STOCK_AVAILABILITY) << "Availability" << " |\n";
+    std::vector<ProductInfo> displayList = products;
 
-    std::cout << "+" << std::string(WIDTH_ID + 2, '-')
-              << "+" << std::string(WIDTH_C_NAME + 2, '-')
-              << "+" << std::string(WIDTH_STOCK + 2, '-')
-              << "+" << std::string(WIDTH_STOCK_AVAILABILITY + 2, '-') << "+\n";
+    if (method=='s') {
+        std::sort(displayList.begin(), displayList.end(), [](const ProductInfo& a, const ProductInfo& b) {
+            return a.stockQnty < b.stockQnty;
+        });
+    }
 
     bool criticalItemsExist = false;
-    for (const auto& product : products) {
-        if (criticalOnly) {
+    for (const auto& product : displayList) {
+        if (method=='c') {
             if (product.stockQnty <= CRIT_THRESHOLD) {
                 printStockInfo(product);
                 criticalItemsExist = true;
@@ -532,16 +614,13 @@ void displayStock(const std::vector<ProductInfo>& products, bool criticalOnly) {
         }
     }
 
-    if (criticalOnly && !criticalItemsExist) {
+    if (method=='c' && !criticalItemsExist) {
         std::cout << "| " << std::left
                   << std::setw(WIDTH_ID + WIDTH_C_NAME + WIDTH_STOCK + WIDTH_STOCK_AVAILABILITY + 7)
                   << smsg.criticalStockNone << " |\n";
     }
 
-    std::cout << "+" << std::string(WIDTH_ID + 2, '-')
-              << "+" << std::string(WIDTH_C_NAME + 2, '-')
-              << "+" << std::string(WIDTH_STOCK + 2, '-')
-              << "+" << std::string(WIDTH_STOCK_AVAILABILITY + 2, '-') << "+\n";
+    printStockTableSeparator();
 }
 
 void displayCart(const std::vector<CartItem>& cart, const double total) {
@@ -615,6 +694,22 @@ void printInventoryTableHeader() {
               << " | " << std::right << std::setw(WIDTH_PRICE) << "Price"
               << " | " << std::setw(WIDTH_STOCK) << "Stock" << " |\n";
     printInventoryTableSeparator();
+}
+
+void printStockTableSeparator() {
+    std::cout << "+" << std::string(WIDTH_ID + 2, '-')
+              << "+" << std::string(WIDTH_C_NAME + 2, '-')
+              << "+" << std::string(WIDTH_STOCK + 2, '-')
+              << "+" << std::string(WIDTH_STOCK_AVAILABILITY + 2, '-') << "+\n";
+}
+
+void printStockTableHeader() {
+    printStockTableSeparator();
+    std::cout << "| " << std::left << std::setw(WIDTH_ID) << "ID"
+              << " | " << std::setw(WIDTH_C_NAME) << "Product Name"
+              << " | " << std::right << std::setw(WIDTH_STOCK) << "Stock"
+              << " | " << std::left << std::setw(WIDTH_STOCK_AVAILABILITY) << "Availability" << " |\n";
+    printStockTableSeparator();
 }
 
 void printCartTableSeparator() {

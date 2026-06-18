@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 
 const std::string INVENTORY_FILE_PATH = "db/inventory.txt";
 const std::string SALES_FILE_PATH = "db/log.txt";
@@ -21,6 +22,8 @@ struct ProductInfo {
 
     bool operator==(const ProductInfo&) const = default;
 };
+
+
 
 struct CartItem {
     std::string ID;
