@@ -10,7 +10,6 @@ struct FileReports {
     const std::string fileCantBeRead = "[File Error]: File cannot be read.\n";
     const std::string corruptLineSkipped = "[File Error]: Line not parsed properly.\n";
     const std::string parsedWithSkippedLines = "[File Warning]: File read successfully, but some lines are skipped.\n\n";
-    const std::string newLogCreated = "[WARNING] No existing sales log found. A new one will be created upon transaction.\n\n";
     const std::string fileNotOpened = "[File Error]: File was not opened properly. Saving aborted.\n";
     const std::string savingFailed = "[System Error]: Failed to finalize the file save.\n";
     const std::string writingFailed = "[System Error]: There was an error writing into file.\n";
