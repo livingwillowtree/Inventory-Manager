@@ -28,6 +28,8 @@ struct CartItem {
     double price;
     int orderQty;
     double total;
+
+    bool operator==(const CartItem&) const = default;
 };
 
 struct SaleReceipt {
@@ -38,6 +40,8 @@ struct SaleReceipt {
     double customerPayment;
     double change;
     std::string date;
+
+    bool operator==(const SaleReceipt&) const = default;
 };
 
 #endif

@@ -16,7 +16,7 @@ struct FileReports {
     const std::string writingFailed = "[System Error]: There was an error writing into file.\n";
 
     const std::string successLoad = "File read successfully.\n\n";
-    const std::string successSave = "\nInventory saved successfully!\n";
+    const std::string successSave = "File saved successfully!\n";
 }const fmsg;
 
 struct FileStatus {
@@ -32,6 +32,6 @@ struct FileStatus {
 int loadInventory(std::vector<ProductInfo>& productInventory);
 int saveInventory(const std::vector<ProductInfo>& productInventory);
 int loadLogs(std::vector<SaleReceipt>& salesLog);
-int appendSaleLog(const SaleReceipt& receipt);
+int saveLogs(const std::vector<SaleReceipt>& salesLog);
 
 #endif

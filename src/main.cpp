@@ -40,7 +40,9 @@ int main() {
             break;
     }
 
-    std::vector<ProductInfo> temp = inventory;
+    std::vector<ProductInfo> tempInv = inventory;
+    std::vector<SaleReceipt> tempLog = salesLog;
+
     bool isRunning = true;
     int choice = 0;
 
@@ -59,26 +61,43 @@ int main() {
                 salesAndTransaction(inventory, salesLog);
                 break;
             case 4:
-                status = loadInventory(inventory);
+                status = saveInventory(inventory);
                 std::cout << "\n\n";
                 switch (status) {
                     case fileStatus.SUCCESS :
-                        std::cout << fmsg.successLoad;
-                        temp = inventory;
+                        std::cout << "Inventory -> " << fmsg.successSave;
+                        tempInv = inventory;
                         break;
                     case fileStatus.ERROR_FILE_NOT_SAVED :
-                        std::cout << fmsg.savingFailed;
+                        std::cout << "Inventory -> " << fmsg.savingFailed;
                         break;
                     case fileStatus.ERROR_WRITING :
-                        std::cout << fmsg.writingFailed;
+                        std::cout << "Inventory -> " << fmsg.writingFailed;
                         break;
                     case fileStatus.ERROR_FILE_NOT_OPENED :
-                        std::cout << fmsg.fileNotOpened;
+                        std::cout << "Inventory -> " << fmsg.fileNotOpened;
+                        break;
+                }
+                status = saveLogs(salesLog);
+                std::cout << "\n\n";
+                switch (status) {
+                    case fileStatus.SUCCESS :
+                        std::cout << "Sales Log -> " << fmsg.successSave;
+                        tempLog = salesLog;
+                        break;
+                    case fileStatus.ERROR_FILE_NOT_SAVED :
+                        std::cout << "Sales Log -> " << fmsg.savingFailed;
+                        break;
+                    case fileStatus.ERROR_WRITING :
+                        std::cout << "Sales Log -> " << fmsg.writingFailed;
+                        break;
+                    case fileStatus.ERROR_FILE_NOT_OPENED :
+                        std::cout << "Sales Log -> " << fmsg.fileNotOpened;
                         break;
                 }
                 break;
             case 0:
-                if (temp == inventory || isSure()) {
+                if ((tempInv == inventory && tempLog == salesLog) || isSure()) {
                     isRunning = false;
                     std::cout << "Exiting System... \n";
                 }

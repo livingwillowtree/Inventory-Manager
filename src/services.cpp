@@ -260,7 +260,7 @@ void processOrder(std::vector<ProductInfo>& products, std::vector<SaleReceipt>& 
                 } else {
                     char outcome = checkout(cart, products, salesLog);
                     if (outcome == 'd') {
-                        menuChoice = 'x';
+                        menuChoice = 'e';
                     }
                 }
                 break;
@@ -388,28 +388,27 @@ char checkout(std::vector<CartItem>& cart, std::vector<ProductInfo>& inventory, 
     receipt.change = numericChangeReturn;
     receipt.date = getCurrentDate();
 
-    std::cout << "\n" << std::string(62, '=') << "\n";
+    std::cout << "\n" << std::string(WIDTH_REC_DESC + WIDTH_REC_QTY + WIDTH_REC_PRICE + WIDTH_REC_TOTAL + 13, '=') << "\n";
     std::cout << "                 OFFICIAL INVOICE TRANSACTION              \n";
-    std::cout << std::string(62, '=') << "\n";
+    std::cout << std::string(WIDTH_REC_DESC + WIDTH_REC_QTY + WIDTH_REC_PRICE + WIDTH_REC_TOTAL + 13, '=') << "\n";
     std::cout << "ID Track:   " << receipt.transactionID << "\n";
     std::cout << "Timestamp:  " << receipt.date << "\n";
     std::cout << "Client:     " << receipt.customerName << "\n";
-
+ 
     printReceiptHeader();
     for (const auto& item : receipt.itemsBought) {
         printReceiptItem(item);
     }
-    std::cout << std::string(62, '-') << "\n";
+    std::cout << " " << std::string(WIDTH_REC_DESC + WIDTH_REC_QTY + WIDTH_REC_PRICE + WIDTH_REC_TOTAL + 13 - 2, '-') << "\n";
 
-    std::cout << std::left << std::setw(42) << "| Net Grand Total :"
-              << " | " << std::right << std::setw(17) << receipt.grandTotal << " |\n";
-    std::cout << std::left << std::setw(42) << "| Customer Payment :"
-              << " | " << std::right << std::setw(17) << receipt.customerPayment << " |\n";
-    std::cout << std::left << std::setw(42) << "| Change Return :"
-              << " | " << std::right << std::setw(17) << receipt.change << " |\n";
-    std::cout << std::string(62, '=') << "\n";
+    std::cout << std::left << std::setw(WIDTH_REC_DESC + WIDTH_REC_QTY + 5) << "| Net Grand Total :"
+              << " | " << std::right << std::setw(WIDTH_REC_PRICE + WIDTH_REC_TOTAL + 3) << receipt.grandTotal << " |\n";
+    std::cout << std::left << std::setw(WIDTH_REC_DESC + WIDTH_REC_QTY + 5) << "| Customer Payment :"
+              << " | " << std::right << std::setw(WIDTH_REC_PRICE + WIDTH_REC_TOTAL + 3) << receipt.customerPayment << " |\n";
+    std::cout << std::left << std::setw(WIDTH_REC_DESC + WIDTH_REC_QTY + 5) << "| Change Return :"
+              << " | " << std::right << std::setw(WIDTH_REC_PRICE + WIDTH_REC_TOTAL + 3) << receipt.change << " |\n";
+    std::cout << std::string(WIDTH_REC_DESC + WIDTH_REC_QTY + WIDTH_REC_PRICE + WIDTH_REC_TOTAL + 13, '=') << "\n";
 
-    appendSaleLog(receipt);
     salesLog.push_back(receipt);
     cart.clear();
 
@@ -570,6 +569,7 @@ void displaySalesLog(const std::vector<SaleReceipt>& salesLog) {
     printSalesLogSeparator('=');
     std::cout << std::left << std::setw(WIDTH_TXN_ID) << "ID"
               << std::setw(WIDTH_CUSTOMER_NAME) << "Name"
+              << std::setw(WIDTH_REC_DATE) << "Date"
               << std::setw(WIDTH_ID) << "Itm ID"
               << std::right << std::setw(WIDTH_STOCK) << "Qty"
               << std::setw(WIDTH_T_PRICE) << "Total" << "\n";
@@ -581,18 +581,20 @@ void displaySalesLog(const std::vector<SaleReceipt>& salesLog) {
         for (const auto& item : receipt.itemsBought) {
             if (isFirstItem) {
                 std::cout << std::left << std::setw(WIDTH_TXN_ID) << receipt.transactionID
-                          << std::setw(WIDTH_CUSTOMER_NAME) << receipt.customerName;
+                          << std::setw(WIDTH_CUSTOMER_NAME) << receipt.customerName
+                          << std::setw(WIDTH_REC_DATE) << receipt.date;
                 isFirstItem = false;
             } else {
                 std::cout << std::left << std::setw(WIDTH_TXN_ID) << ""
-                          << std::setw(WIDTH_CUSTOMER_NAME) << "";
-            }
+                          << std::setw(WIDTH_CUSTOMER_NAME) << ""
+                          << std::setw(WIDTH_REC_DATE) << "";
+            }  
 
             std::cout << std::left << std::setw(WIDTH_ID) << item.ID
                       << std::right << std::setw(WIDTH_STOCK) << item.orderQty
                       << std::setw(WIDTH_T_PRICE) << std::fixed << std::setprecision(2) << item.total << "\n";
         }
-        std::cout << std::left << std::setw(WIDTH_TXN_ID + WIDTH_CUSTOMER_NAME + WIDTH_ID) << ""
+        std::cout << std::left << std::setw(WIDTH_TXN_ID + WIDTH_CUSTOMER_NAME + WIDTH_REC_DATE + WIDTH_ID) << ""
                   << std::right << std::setw(WIDTH_STOCK) << "Sum:"
                   << std::setw(WIDTH_T_PRICE) << receipt.grandTotal << "\n";
         printSalesLogSeparator('-');
@@ -634,7 +636,7 @@ void printCartTableHeader() {
 }
 
 void printSalesLogSeparator(char symbol) {
-    std::cout << std::string(WIDTH_TXN_ID + WIDTH_CUSTOMER_NAME + WIDTH_ID + WIDTH_STOCK + WIDTH_T_PRICE, symbol) << "\n";
+    std::cout << std::string(WIDTH_REC_DATE + WIDTH_TXN_ID + WIDTH_CUSTOMER_NAME + WIDTH_ID + WIDTH_STOCK + WIDTH_T_PRICE, symbol) << "\n";
 }
 
 void printProductInfo(const ProductInfo& p) {
@@ -645,7 +647,7 @@ void printProductInfo(const ProductInfo& p) {
 }
 
 void printStockInfo(const ProductInfo& p) {
-    std::string displayName = (p.name.length() > 20) ? p.name.substr(0, 17) + "...": p.name;
+    std::string displayName = (p.name.length() > (size_t)WIDTH_NAME) ? p.name.substr(0, WIDTH_NAME-3) + "...": p.name;
 
     std::cout << "| " << std::left << std::setw(WIDTH_ID) << p.ID
               << " | " << std::setw(WIDTH_C_NAME) << displayName
@@ -654,7 +656,7 @@ void printStockInfo(const ProductInfo& p) {
 }
 
 void printCartInfo(const CartItem& c) {
-    std::string displayName = (c.name.length() > 20) ? c.name.substr(0, 17) + "...": c.name;
+    std::string displayName = (c.name.length() > (size_t)WIDTH_C_NAME) ? c.name.substr(0, WIDTH_C_NAME-3) + "...": c.name;
     
     std::cout << "| " << std::left << std::setw(WIDTH_ID) << c.ID
               << " | " << std::setw(WIDTH_C_NAME) << displayName
@@ -664,12 +666,12 @@ void printCartInfo(const CartItem& c) {
 }
 
 void printReceiptHeader() {
-    std::cout << " " << std::string(61, '-') << "\n"
+    std::cout << " " << std::string(WIDTH_REC_DESC + WIDTH_REC_QTY + WIDTH_REC_PRICE + WIDTH_REC_TOTAL + 13 - 2, '-') << "\n"
               << "| " << std::left << std::setw(WIDTH_REC_DESC) << "Description"
               << " | " << std::setw(WIDTH_REC_QTY) << "Qty"
               << " | " << std::right << std::setw(WIDTH_REC_PRICE) << "Unit Price"
               << " | " << std::setw(WIDTH_REC_TOTAL) << "Total" << " |\n"
-              << " " << std::string(61, '-') << "\n";
+              << " " << std::string(WIDTH_REC_DESC + WIDTH_REC_QTY + WIDTH_REC_PRICE + WIDTH_REC_TOTAL + 13 - 2, '-') << "\n";
 }
 
 void printReceiptItem(const CartItem& c) {

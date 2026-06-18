@@ -7,13 +7,17 @@
 #include "utils.h"
 #include "fileHandling.h"
 
-struct ParsedLineResult {
-    SaleReceipt receiptInfo;
-    CartItem item;
+struct SaleInfo {
+    std::string transactionID;
+    std::string customerName;
+    std::string date;
+    double grandTotal;
+    
+    CartItem item;         // Captured item context packed nicely
     bool isValid = true;
 };
 
-ParsedLineResult parseSaleLine(const std::string& line);
+SaleInfo parseSaleLine(const std::string& line);
 ProductInfo parseInvLine(const std::string& productRawData);
 std::string encodeProductData(const ProductInfo& product);
 
@@ -108,18 +112,29 @@ std::string encodeProductData(const ProductInfo& product) {
 int loadLogs(std::vector<SaleReceipt>& salesLog) {
     std::string rawLine;
     std::ifstream readFile(SALES_FILE_PATH);
-    if (!readFile.is_open()) return fileStatus.ERROR_LOG_NOT_FOUND;
+    // Blocks execution if sales log file path cannot be tracked/read successfully
+    if (!readFile.is_open()) return fileStatus.ERROR_FILE_NOT_READ;
 
     while (std::getline(readFile, rawLine)) {
         if (rawLine.empty()) continue;
 
-        ParsedLineResult parsed = parseSaleLine(rawLine);
+        SaleInfo parsed = parseSaleLine(rawLine);
         if (!parsed.isValid) continue;
 
-        if (!salesLog.empty() && salesLog.back().transactionID == parsed.receiptInfo.transactionID) {
+        // If this item belongs to the transaction we are currently building, append it to the same vector
+        if (!salesLog.empty() && salesLog.back().transactionID == parsed.transactionID) {
             salesLog.back().itemsBought.push_back(parsed.item);
         } else {
-            SaleReceipt newReceipt = parsed.receiptInfo;
+            // Otherwise, set up a new base record block
+            SaleReceipt newReceipt;
+            newReceipt.transactionID = parsed.transactionID;
+            newReceipt.customerName = parsed.customerName;
+            newReceipt.date = parsed.date;
+            newReceipt.grandTotal = parsed.grandTotal;
+            // Missing payment information is initialized as safe defaults
+            newReceipt.customerPayment = 0.0;
+            newReceipt.change = 0.0;
+            
             newReceipt.itemsBought.push_back(parsed.item);
             salesLog.push_back(newReceipt);
         }
@@ -129,8 +144,8 @@ int loadLogs(std::vector<SaleReceipt>& salesLog) {
     return fileStatus.SUCCESS;
 }
 
-ParsedLineResult parseSaleLine(const std::string& line) {
-    ParsedLineResult result;
+SaleInfo parseSaleLine(const std::string& line) {
+    SaleInfo result;
     std::stringstream ss(line);
     std::string token;
     std::vector<std::string> tokens;
@@ -139,20 +154,20 @@ ParsedLineResult parseSaleLine(const std::string& line) {
         tokens.push_back(token);
     }
 
-    if (tokens.size() != 10) {
+    // Refactored strict bounds check down to your exact 8 elements layout pattern
+    if (tokens.size() != 8 || !validateIntStr(tokens[4]) || !validateDoubleStr(tokens[5]) || !validateDoubleStr(tokens[6]) || !validateDoubleStr(tokens[7])) {
         result.isValid = false;
         return result;
     }
 
-    result.receiptInfo.transactionID = tokens[0];
-    result.receiptInfo.customerName = tokens[1];
-    result.receiptInfo.date = tokens[2];
-    result.receiptInfo.grandTotal = std::stod(tokens[7]);
-    result.receiptInfo.customerPayment = std::stod(tokens[8]);
-    result.receiptInfo.change = std::stod(tokens[9]);
+    result.transactionID = tokens[0];
+    result.customerName = tokens[1];
+    result.date = tokens[2];
+    result.grandTotal = std::stod(tokens[7]);
 
+    // Capture the line item snapshot variables safely inside the item object block
     result.item.ID = tokens[3];
-    result.item.name = "";
+    result.item.name = ""; // Name string is stripped out to match parameters
     result.item.orderQty = std::stoi(tokens[4]);
     result.item.price = std::stod(tokens[5]);
     result.item.total = std::stod(tokens[6]);
@@ -160,31 +175,40 @@ ParsedLineResult parseSaleLine(const std::string& line) {
     return result;
 }
 
-int appendSaleLog(const SaleReceipt& receipt) {
-    std::ofstream writeFile(SALES_FILE_PATH, std::ios::app);
+int saveLogs(const std::vector<SaleReceipt>& salesLog) {
+    std::ofstream writeFile(SALES_FILE_PATH + ".tmp");
     if (!writeFile.is_open()) return fileStatus.ERROR_FILE_NOT_OPENED;
 
     std::stringstream ss;
     ss << std::fixed << std::setprecision(2);
 
-    for (const auto& item : receipt.itemsBought) {
-        ss.str("");
-        ss.clear();
+    for (const auto& receipt : salesLog) {
+        for (const auto& item : receipt.itemsBought) {
+            ss.str("");
+            ss.clear();
 
-        ss << receipt.transactionID << "|"
-           << receipt.customerName << "|"
-           << receipt.date << "|"
-           << item.ID << "|"
-           << item.orderQty << "|"
-           << item.price << "|"
-           << item.total << "|"
-           << receipt.grandTotal << "|"
-           << receipt.customerPayment << "|"
-           << receipt.change;
+            // Writes the trimmed down 8-token transaction architecture layout
+            ss << receipt.transactionID << "|"
+               << receipt.customerName << "|"
+               << receipt.date << "|"
+               << item.ID << "|"
+               << item.orderQty << "|"
+               << item.price << "|"
+               << item.total << "|"
+               << receipt.grandTotal;
 
-        writeFile << ss.str() << "\n";
+            writeFile << ss.str() << "\n";
+            if (writeFile.bad()) {
+                writeFile.close();
+                return fileStatus.ERROR_WRITING;
+            }
+        }
     }
-
     writeFile.close();
+
+    std::error_code ec;
+    std::filesystem::rename(SALES_FILE_PATH + ".tmp", SALES_FILE_PATH, ec);
+    if (ec) return fileStatus.ERROR_FILE_NOT_SAVED;
+
     return fileStatus.SUCCESS;
 }

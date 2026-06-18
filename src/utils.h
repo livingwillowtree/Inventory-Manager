@@ -21,20 +21,21 @@ struct InputReports {
 
 const int CRIT_THRESHOLD = 5;
 
-const int WIDTH_ID = 6;
-const int WIDTH_NAME = 35;
-const int WIDTH_PRICE = 8;
+const int WIDTH_ID = 8;
+const int WIDTH_NAME = 50;
+const int WIDTH_PRICE = 10;
 const int WIDTH_STOCK = 8;
-const int WIDTH_C_NAME = 25;
-const int WIDTH_T_PRICE = 10;
-const int WIDTH_STOCK_AVAILABILITY = 16;
-const int WIDTH_CUSTOMER_NAME = 20;
+const int WIDTH_C_NAME = 40;
+const int WIDTH_T_PRICE = 12;
+const int WIDTH_STOCK_AVAILABILITY = 18;
+const int WIDTH_CUSTOMER_NAME = 30;
 const int WIDTH_TXN_ID = 10;
 
-const int WIDTH_REC_DESC = 22;
-const int WIDTH_REC_QTY = 6;
-const int WIDTH_REC_PRICE = 11;
-const int WIDTH_REC_TOTAL = 11;
+const int WIDTH_REC_DESC = 30;
+const int WIDTH_REC_QTY = 10;
+const int WIDTH_REC_PRICE = 12;
+const int WIDTH_REC_TOTAL = 12;
+const int WIDTH_REC_DATE = 25;
 
 std::string getString(const std::string& prompt = "", int min = 1, int max = 999999);
 double getDouble(const std::string& prompt = "", double min = 0.0, double max = 999999.9);
