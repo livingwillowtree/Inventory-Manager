@@ -10,7 +10,6 @@
 #include "utils.h"
 #include "fileHandling.h"
 
-// --- private printing helpers
 void printInventoryTableSeparator();
 void printInventoryTableHeader();
 void printCartTableSeparator();
@@ -24,7 +23,6 @@ void printCartInfo(const CartItem& c);
 void printReceiptHeader();
 void printReceiptItem(const CartItem& c);
 
-// --- order processing helpers
 void addToCart(std::vector<ProductInfo>& products, std::vector<CartItem>& cart);
 void removeFromCart(std::vector<CartItem>& cart);
 void viewCart(const std::vector<CartItem>& cart);
@@ -33,7 +31,6 @@ std::string generateNextTransactionID(const std::vector<SaleReceipt>& logs);
 std::string getCurrentDate();
 
 
-// ============= SERVICES ==============================
 void addProduct(std::vector<ProductInfo>& inventory) {
     std::string ID;
     std::string name;
@@ -269,7 +266,6 @@ void displayAnalysisReport(const std::vector<ProductInfo>& inventory, const std:
     std::cout << " Average Transaction Value    : " << avgTicket << "\n";
     std::cout << " Total Stock Units Sold  : " << totalUnitsSold << "\n\n";
 
-    // --- 3. VELOCITY & REVENUE LEADERS ---
     std::string bestSellerID = "";
     int maxQty = 0;
     std::string topEarnerID = "";
@@ -359,7 +355,6 @@ void processOrder(std::vector<ProductInfo>& products, std::vector<SaleReceipt>& 
     } while (menuChoice != 'e');
 }
 
-// ============================= PROCESS ORDER HELPERS
 void addToCart(std::vector<ProductInfo>& products, std::vector<CartItem>& cart) {
     displayProducts(products);
 
@@ -531,7 +526,6 @@ std::string getCurrentDate() {
     return bufferStringStream.str();
 }
 
-// ================ DISPLAYS AND PRINT HELPERS ======================
 void displayMainMenu() {
     std::string mainMenu = "\n===== PRODUCT INVENTORY SYSTEM =====\n\n"
                            "      [1] Inventory Management\n"

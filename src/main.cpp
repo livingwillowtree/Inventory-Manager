@@ -36,7 +36,7 @@ int main() {
             std::cout << "Sales Log -> " << fmsg.successLoad;
             break;
         case fileStatus.ERROR_LOG_NOT_FOUND:
-            std::cout << fmsg.newLogCreated;
+            std::cout << fmsg.fileCantBeRead;
             break;
     }
 

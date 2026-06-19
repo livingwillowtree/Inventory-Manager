@@ -7,13 +7,14 @@
 #include "utils.h"
 #include "fileHandling.h"
 
+// for data parsing purposes only, private struct.
 struct SaleInfo {
     std::string transactionID;
     std::string customerName;
     std::string date;
     double grandTotal;
     
-    CartItem item;         // Captured item context packed nicely
+    CartItem item;
     bool isValid = true;
 };
 
@@ -112,7 +113,6 @@ std::string encodeProductData(const ProductInfo& product) {
 int loadLogs(std::vector<SaleReceipt>& salesLog) {
     std::string rawLine;
     std::ifstream readFile(SALES_FILE_PATH);
-    // Blocks execution if sales log file path cannot be tracked/read successfully
     if (!readFile.is_open()) return fileStatus.ERROR_FILE_NOT_READ;
 
     while (std::getline(readFile, rawLine)) {
@@ -121,17 +121,15 @@ int loadLogs(std::vector<SaleReceipt>& salesLog) {
         SaleInfo parsed = parseSaleLine(rawLine);
         if (!parsed.isValid) continue;
 
-        // If this item belongs to the transaction we are currently building, append it to the same vector
         if (!salesLog.empty() && salesLog.back().transactionID == parsed.transactionID) {
             salesLog.back().itemsBought.push_back(parsed.item);
         } else {
-            // Otherwise, set up a new base record block
             SaleReceipt newReceipt;
             newReceipt.transactionID = parsed.transactionID;
             newReceipt.customerName = parsed.customerName;
             newReceipt.date = parsed.date;
             newReceipt.grandTotal = parsed.grandTotal;
-            // Missing payment information is initialized as safe defaults
+
             newReceipt.customerPayment = 0.0;
             newReceipt.change = 0.0;
             
@@ -154,7 +152,6 @@ SaleInfo parseSaleLine(const std::string& line) {
         tokens.push_back(token);
     }
 
-    // Refactored strict bounds check down to your exact 8 elements layout pattern
     if (tokens.size() != 8 || !validateIntStr(tokens[4]) || !validateDoubleStr(tokens[5]) || !validateDoubleStr(tokens[6]) || !validateDoubleStr(tokens[7])) {
         result.isValid = false;
         return result;
@@ -165,9 +162,8 @@ SaleInfo parseSaleLine(const std::string& line) {
     result.date = tokens[2];
     result.grandTotal = std::stod(tokens[7]);
 
-    // Capture the line item snapshot variables safely inside the item object block
     result.item.ID = tokens[3];
-    result.item.name = ""; // Name string is stripped out to match parameters
+    result.item.name = ""; 
     result.item.orderQty = std::stoi(tokens[4]);
     result.item.price = std::stod(tokens[5]);
     result.item.total = std::stod(tokens[6]);
@@ -187,7 +183,6 @@ int saveLogs(const std::vector<SaleReceipt>& salesLog) {
             ss.str("");
             ss.clear();
 
-            // Writes the trimmed down 8-token transaction architecture layout
             ss << receipt.transactionID << "|"
                << receipt.customerName << "|"
                << receipt.date << "|"
