@@ -37,7 +37,7 @@ int main() {
             break;
         case fileStatus.ERROR_LOG_NOT_FOUND:
             std::cout << fmsg.fileCantBeRead;
-            break;
+            return 1;
     }
 
     std::vector<ProductInfo> tempInv = inventory;
