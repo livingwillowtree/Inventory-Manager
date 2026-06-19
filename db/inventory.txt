@@ -9,9 +9,9 @@ E404|Wireless Mouse|350.00|15
 E405|USB Flash Drive 512GB|4000.00|23
 E406|Charging Cable Type-C|150.00|45
 E407|Wall Charger Adapter|220.00|30
-F201|Banana Chips|17.99|132
+F201|Banana Chips|17.99|32
 F202|Potato Chips|35.00|20
-F203|Chocolate Bar|45.50|5
+F203|Chocolate Bar|45.50|120
 F204|Biscuit Pack|22.00|3
 F205|Peanuts Salty|15.75|60
 S101|Notebook|20.50|95

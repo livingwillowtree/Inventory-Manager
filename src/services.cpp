@@ -112,7 +112,7 @@ void updateProduct(std::vector<ProductInfo>& products) {
             }
             case '3': {
                 int replenishment = getInt("Enter new stock quantity:", 1);
-                targetProduct->stockQnty += replenishment;
+                targetProduct->stockQnty = replenishment;
                 break;
             }
             case '0':
@@ -527,7 +527,7 @@ std::string getCurrentDate() {
 }
 
 void displayMainMenu() {
-    std::string mainMenu = "\n===== PRODUCT INVENTORY SYSTEM =====\n\n"
+    std::string mainMenu = "\n===== PRODUCT INVENTORY && CUSTOMER ORDERING SYSTEM =====\n\n"
                            "      [1] Inventory Management\n"
                            "      [2] Stock Monitoring\n"
                            "      [3] Sales & Transaction\n"
